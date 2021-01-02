@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+        <div class="container">
+   
+       
+    
+        <div class='row'>
+            <div class='col-8'>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="alert alert-warning" role="alert">
+                        {% for message in messages %}
+                            {{ message }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
+               
+                {% for  project in projects_list %}
+                <h3><a href="{{ project.url }}">{{ project.name }}</a> </h3>
+                
+            </hr>
+                {% endfor %}
+            </div>
+           
+        </div>
+    </div>
+    {% endblock %}
