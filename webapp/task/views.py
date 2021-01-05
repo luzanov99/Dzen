@@ -8,3 +8,9 @@ def add_task():
     title='Добавление новой задачи'
     project_form=TaskForm()
     return render_template('task/add_task.html',page_title=title, form=project_form)
+
+@blueprint.route("/<int:id>")
+def task_detail(id):
+    title='Задача'
+    task=Task.query.get(id)
+    return  render_template('task/task_detail.html', page_title=title, task=task)

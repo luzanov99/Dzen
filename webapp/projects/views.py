@@ -10,6 +10,15 @@ def index():
     projects_list=Project.query.all()
     return  render_template('projects/index.html', page_title=title, projects_list=projects_list)
 
+@blueprint.route("/<int:id>")
+def project_detail(id):
+    title='Проект'
+    
+    project=Project.query.get(id)
+    project_tasks=project.tasks.all()
+    return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
+ 
+
 @blueprint.route("/addproject")
 def add_project():
     title='Добавление нового проекта'
