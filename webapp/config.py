@@ -8,3 +8,4 @@ SQLALCHEMY_DATABASE_URI = "sqlite:///" + os.path.join(
 )
 
 SECRET_KEY = "12321asdwfq!$@123"
+SQLALCHEMY_TRACK_MODIFICATIONS = False

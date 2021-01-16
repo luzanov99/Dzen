@@ -18,6 +18,8 @@
                 <h3>{{ task.title }} </h3>     
                 <h3>{{ task.description}}</h3>
                 <h3>{{ task.due_date }}</h3>
+                <h3>{{ task.status }}</h3>
+                <h3><a href="{{ url_for('task.edit_task', id_project=project.id, id=task.id)}}">Редактировать задачу</a> </h3>  
             </div>
         </div>
     </div>
