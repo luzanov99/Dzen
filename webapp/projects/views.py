@@ -1,6 +1,7 @@
 from flask import  Blueprint, render_template, current_app, flash, redirect, url_for
 from webapp.projects.models import Project
-from webapp.projects.forms import ProjectForm
+from webapp.user.models import User
+from webapp.projects.forms import ProjectForm, AddUserForm
 from webapp.db import db
 blueprint=Blueprint('projects', __name__)
 
@@ -17,7 +18,35 @@ def project_detail(id):
     project=Project.query.get(id)
     project_tasks=project.tasks.all()
     return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
- 
+
+@blueprint.route("/<int:id>/add_user_to_project")
+def add_user_to_project(id):
+    project=Project.query.get(id)
+    project_form=AddUserForm()
+    title='Добавить участника проекта'
+    return render_template('projects/add_user_project.html',page_title=title, form=project_form, project=project)
+
+@blueprint.route("/<int:id>/process_add_user_project", methods=['POST'])
+def process_add_user_project(id):
+    title='Проект'
+    project=Project.query.get(id)
+    project_tasks=project.tasks.all()
+    form = AddUserForm()
+    if form.validate_on_submit():
+        u = Project.query.get(id)
+        user_name=User.query.filter_by(username=form.username.data).first()
+        if user_name not in u.users.all():
+
+            u.users.append(user_name)
+            db.session.add(u)
+            db.session.commit()
+            flash("Пользователь успешно добавлен")
+        else:
+            flash("Такой пользователь уже существует")
+            return render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
+        return render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
+    
+
 
 @blueprint.route("/addproject")
 def add_project():

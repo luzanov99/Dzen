@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
+
         <div class="container">
    
        
@@ -15,8 +16,14 @@
                     </div>
                     {% endif %}
                 {% endwith %}
-                <h3>{{ project.name }} </h3>   
-                <h3><a href="{{ url_for('task.add_task', id_project=project.id)}}">Добавить задачу</a> </h3>  
+                <h3>{{ project.name }} </h3> 
+                <div class="task_add">
+                    {% if current_user.is_admin %}
+                    <h3><a href="{{ url_for('task.add_task', id_project=project.id)}}"> Добавить задачу </a> </h3>
+                    <h3><a href="{{ url_for('projects.add_user_to_project', id=project.id)}}">Добавить участника</a></h3>
+                    {% endif %}
+                </div>
+                
                 {% for  task in project_tasks %}
                 <h3><a href="{{project.id}}/task/{{task.id}}">{{ task.title }}</a> </h3>
             </hr>

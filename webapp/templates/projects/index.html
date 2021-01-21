@@ -15,12 +15,20 @@
                     </div>
                     {% endif %}
                 {% endwith %}
-               
+                {% if current_user.is_admin %}
                 {% for  project in projects_list %}
-                <h3><a href="/{{project.id}}">{{ project.name }}</a> </h3>
+                <h3><a href="/{{project.id}}">{{ project.name }}</a><img src="{{ url_for('static', filename='media/images/open.png') }}" /> </h3>
                 
             </hr>
                 {% endfor %}
+                 {% else %}
+
+                {% for  project in projects_list %}
+                <h3><a href="/{{project.id}}">{{ project.name }}</a><img src="{{ url_for('static', filename='media/images/close.png') }}" /> </h3>
+                
+            </hr>
+                {% endfor %}
+                {% endif %}
             </div>
            
         </div>
