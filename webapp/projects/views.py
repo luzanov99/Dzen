@@ -1,3 +1,4 @@
+from flask_login import LoginManager,current_user, login_required, login_user, logout_user
 from flask import  Blueprint, render_template, current_app, flash, redirect, url_for
 from webapp.projects.models import Project
 from webapp.user.models import User
@@ -9,6 +10,9 @@ blueprint=Blueprint('projects', __name__)
 def index():
     title='Проекты'
     projects_list=Project.query.all()
+    for project in projects_list:
+        if current_user in project.users.all():
+            print(project)
     return  render_template('projects/index.html', page_title=title, projects_list=projects_list)
 
 @blueprint.route("/<int:id>")
@@ -35,6 +39,7 @@ def process_add_user_project(id):
     if form.validate_on_submit():
         u = Project.query.get(id)
         user_name=User.query.filter_by(username=form.username.data).first()
+        #print(u.users.all())
         if user_name not in u.users.all():
 
             u.users.append(user_name)

@@ -19,14 +19,19 @@
                 {% for  project in projects_list %}
                 <h3><a href="/{{project.id}}">{{ project.name }}</a><img src="{{ url_for('static', filename='media/images/open.png') }}" /> </h3>
                 
-            </hr>
+                </hr>
                 {% endfor %}
-                 {% else %}
+               
+                {% else %}
 
                 {% for  project in projects_list %}
-                <h3><a href="/{{project.id}}">{{ project.name }}</a><img src="{{ url_for('static', filename='media/images/close.png') }}" /> </h3>
+                 {% if curent_user in project.users.all()%}
+                    <h3><a href="/{{project.id}}">1{{ project.name }}</a><img src="{{ url_for('static', filename='media/images/open.png') }}" /> </h3>
+
                 
-            </hr>
+                {% else %}
+                    <h3><a href="/{{project.id}}">2{{ project.name }}</a><img src="{{ url_for('static', filename='media/images/close.png') }}" /> </h3>
+                    {% endif%}
                 {% endfor %}
                 {% endif %}
             </div>

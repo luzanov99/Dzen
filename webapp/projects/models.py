@@ -12,4 +12,6 @@ class Project(db.Model):
     users=db.relationship('User',secondary=users_on_projets, backref='user_project', lazy='dynamic')
     def __repr__(self):
         return f"<Project {self.name}>"
+
+
         
