@@ -19,7 +19,38 @@
                 <h3>{{ task.description}}</h3>
                 <h3>{{ task.due_date }}</h3>
                 <h3>{{ task.status }}</h3>
-                <h3><a href="{{ url_for('task.edit_task', id_project=project.id, id=task.id)}}">Редактировать задачу</a> </h3>  
+                <br>
+                <br>
+                {% for  comment in comments %}
+                <h5>
+                    {{current_user.username}}:
+                    {{comment.text}}
+                    {{comment.date}}
+                </h5>
+                </hr>
+                {% endfor %}
+
+
+                <form action="{{ url_for('task.process_add_comment', id_project=project.id, id=task.id)}}" method="POST">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                        {{ form.text.label }}
+                        {{ form.text() }}
+                    </div>
+                 
+                    {{ form.submit }}
+                </form>
+                
+
+
+                {% if current_user.is_admin %}
+                <h3><a  class="btn btn-primary" href="{{ url_for('task.edit_task', id_project=project.id, id=task.id)}}">Редактировать задачу</a> </h3> 
+                {% endif %} 
+                <form action="">
+
+                    
+                </form>
+
             </div>
         </div>
     </div>

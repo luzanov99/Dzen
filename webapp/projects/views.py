@@ -1,31 +1,63 @@
 from flask_login import LoginManager,current_user, login_required, login_user, logout_user
 from flask import  Blueprint, render_template, current_app, flash, redirect, url_for
 from webapp.projects.models import Project
-from webapp.user.models import User
-from webapp.projects.forms import ProjectForm, AddUserForm
+from webapp.user.models import User, Messege
+
+from webapp.projects.forms import ProjectForm, AddUserForm, MessegeForm
 from webapp.db import db
 blueprint=Blueprint('projects', __name__)
 
 @blueprint.route("/")
 def index():
-    title='Проекты'
-    projects_list=Project.query.all()
-    for project in projects_list:
-        if current_user in project.users.all():
-            print(project)
-    return  render_template('projects/index.html', page_title=title, projects_list=projects_list)
+    if current_user.is_authenticated:
+        title='Проекты'
+        projects_list=Project.query.all()
+        return  render_template('projects/index.html', page_title=title, projects_list=projects_list)
+    else :
+        return redirect(url_for('user.login'))
 
 @blueprint.route("/<int:id>")
+@login_required
 def project_detail(id):
-    title='Проект'
     
-    project=Project.query.get(id)
+    title='Проект'
+    project=Project.query.get_or_404(id)
     project_tasks=project.tasks.all()
     return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
 
+        
+
+@blueprint.route("/<int:id>/send_messege")
+@login_required
+def send_messege(id):
+    project=Project.query.get_or_404(id)
+    messege_form=MessegeForm()
+    title='Запрос к администратору'
+    return render_template('projects/send_messege.html',page_title=title, form=messege_form, project=project)
+
+@blueprint.route("/<int:id>/process_send_messege",  methods=['POST'])
+def process_send_messege(id):
+    project=Project.query.get_or_404(id)
+    form = MessegeForm()
+    if form.validate_on_submit():
+        new_messege=Messege(text=form.text.data,user_id=current_user.id, status=form.status.data, project_id=project.id)
+        db.session.add(new_messege)
+        db.session.commit()
+        return redirect(url_for('projects.index'))
+    else:
+        for field, errors in form.errors.items():
+            for error in errors:
+                flash('Ошибка в поле "{}": - {}'.format(getattr(form, field).label.text, error))
+
+
+        return redirect(url_for('task.send_messege', id=project.id))
+
+    
+
 @blueprint.route("/<int:id>/add_user_to_project")
+@login_required
 def add_user_to_project(id):
-    project=Project.query.get(id)
+    project=Project.query.get_or_404(id)
     project_form=AddUserForm()
     title='Добавить участника проекта'
     return render_template('projects/add_user_project.html',page_title=title, form=project_form, project=project)
@@ -33,11 +65,11 @@ def add_user_to_project(id):
 @blueprint.route("/<int:id>/process_add_user_project", methods=['POST'])
 def process_add_user_project(id):
     title='Проект'
-    project=Project.query.get(id)
+    project=Project.query.get_or_404(id)
     project_tasks=project.tasks.all()
     form = AddUserForm()
     if form.validate_on_submit():
-        u = Project.query.get(id)
+        u = Project.query.get_or_404(id)
         user_name=User.query.filter_by(username=form.username.data).first()
         #print(u.users.all())
         if user_name not in u.users.all():
@@ -54,6 +86,7 @@ def process_add_user_project(id):
 
 
 @blueprint.route("/addproject")
+@login_required
 def add_project():
     title='Добавление нового проекта'
     project_form=ProjectForm()
@@ -71,3 +104,7 @@ def process_addproject():
 
     flash('Неправильное имя пользователя или пароль')
     return redirect(url_for('user.login'))
+
+@blueprint.app_errorhandler(404)
+def handle_404(err):
+    return render_template('404.html'), 404

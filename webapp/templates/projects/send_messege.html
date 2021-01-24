@@ -11,24 +11,17 @@
             </div>
             {% endif %}
         {% endwith %}
-    <form action="{{ url_for('task.process_addtask', id_project=project.id)}}" method="POST" method="POST">
+    <form action="{{ url_for('projects.process_send_messege', id=project.id)}}" method="POST">
         {{form.hidden_tag()}}
         <div class="form-group">
-            {{ form.title.label }}<br>
-            {{ form.title() }}
-        </div>
-        <div class="form-group">
-            {{ form.description.label }}<br>
-            {{ form.description() }}
-            
-        </div>
-        <div class="form-group">
-            {{ form.due_date.label }}<br>
-            {{ form.due_date(type="date") }}
+            {{ form.text.label }}<br>
+            {{ form.text() }}
+        
         </div>
         <div class="form-group">
             {{ form.status.label }}<br>
             {{ form.status() }}
+        
         </div>
         {{ form.submit }}
     </form>
