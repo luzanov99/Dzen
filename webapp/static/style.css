@@ -29,10 +29,22 @@
     margin-right:20px ;
    
 }
+.col-8 h3{
+    word-wrap: break-word;
+}
 .col-4 {
     flex: 0 0 50%;
     max-width: 50%;
 }
 .col-12 h3{
     margin: 20px;
+}
+
+.comment_list h5{
+    
+   text-align: left;
+}
+.date {
+    float: right;
+    text-align: right;
 }

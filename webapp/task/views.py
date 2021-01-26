@@ -2,9 +2,11 @@ from datetime import datetime
 from flask import  Blueprint, render_template, current_app, flash, redirect, url_for
 
 from flask_login import LoginManager,current_user, login_required
-from webapp.task.models import Task, Comment
+from webapp.task.models import Task, Comment, Tag
+from webapp.user.models import User
 from webapp.task.forms import TaskForm, CommentForm
 from webapp.projects.models import Project
+
 from webapp.db import db
 
 blueprint=Blueprint('task', __name__,   url_prefix='/<id_project>/task')
@@ -15,13 +17,13 @@ blueprint=Blueprint('task', __name__,   url_prefix='/<id_project>/task')
 @login_required
 def task_detail(id, id_project):
    
-   
+    user=User
     form=CommentForm()
     project=Project.query.get_or_404(id_project)
     title='Задача'
     task=Task.query.get_or_404(id)
     comments=task.comments
-    return  render_template('task/task_detail.html', page_title=title, task=task, project=project, form=form, comments=comments)
+    return  render_template('task/task_detail.html', page_title=title, task=task, project=project, form=form, comments=comments, user=User)
 
 @blueprint.route("/<int:id>/process_add_comment", methods=['POST'] )
 def process_add_comment(id, id_project):
@@ -79,6 +81,9 @@ def add_task(id_project):
     project=Project.query.get_or_404(id_project)
     title='Добавление новой задачи'
     task_form=TaskForm()
+    tags=Tag.query.all()
+    groups_list=[(tag.name, tag.name) for tag in tags]
+    task_form.tags.choices=groups_list
     return render_template('task/add_task.html',page_title=title, form=task_form, project=project)
 
 @blueprint.route('/process_addtask', methods=['POST'])
@@ -88,8 +93,9 @@ def process_addtask(id_project):
     if form.validate_on_submit():
         u = Project.query.get_or_404(id_project)
         new_task=Task(title=form.title.data,description=form.description.data,project=u, due_date=form.due_date.data, status=form.status.data)
-        db.session.add(new_task)
-        db.session.commit()
+        
+        #db.session.add(new_task)
+        #db.session.commit()
         return redirect(url_for('projects.index'))
     else:
         for field, errors in form.errors.items():

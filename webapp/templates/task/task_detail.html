@@ -17,17 +17,23 @@
                 {% endwith %}
                 <h3>{{ task.title }} </h3>     
                 <h3>{{ task.description}}</h3>
-                <h3>{{ task.due_date }}</h3>
-                <h3>{{ task.status }}</h3>
+                <h5>Дата публикации {{ task.due_date.strftime('%d.%m.%Y') }}</h5>
+                
                 <br>
                 <br>
                 {% for  comment in comments %}
+                <div class="comment_list">
                 <h5>
-                    {{current_user.username}}:
+                    {{user.query.get(comment.author).username}}:
                     {{comment.text}}
-                    {{comment.date}}
+                    <div class="date">
+                    <small>{{comment.date.strftime('%d.%m:%H.%M')}} </small>
+                    </div>
                 </h5>
+                  
+                
                 </hr>
+                </div>
                 {% endfor %}
 
 
