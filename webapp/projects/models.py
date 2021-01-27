@@ -14,4 +14,11 @@ class Project(db.Model):
         return f"<Project {self.name}>"
 
 
+class ChatMessages(db.Model):
+    id       = db.Column(db.Integer, primary_key=True)
+    username = db.Column(db.String(256))
+    msg      = db.Column(db.Text)
+
+    def __repr__(self):
+        return '<User %r>' % self.username
         

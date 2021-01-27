@@ -4,7 +4,9 @@
     max-width: 900px;
 }
 
-
+.task_add{
+    margin: 60px;
+}
 .task_add a{
     text-align: center;
     cursor: pointer;
@@ -37,7 +39,7 @@
     max-width: 50%;
 }
 .col-12 h3{
-    margin: 20px;
+    
 }
 
 .comment_list h5{
@@ -47,4 +49,13 @@
 .date {
     float: right;
     text-align: right;
+}
+.task_tag{
+    
+    font-size: 20px;
+    padding-left: 40px;
+}
+.task_tag a{
+    opacity: 0.4;
+    color: rgb(146, 133, 133);
 }

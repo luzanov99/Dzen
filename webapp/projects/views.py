@@ -1,11 +1,14 @@
 from flask_login import LoginManager,current_user, login_required, login_user, logout_user
-from flask import  Blueprint, render_template, current_app, flash, redirect, url_for
-from webapp.projects.models import Project
+from flask import  Blueprint, render_template, current_app, flash, redirect, url_for, abort
+from webapp.projects.models import Project, ChatMessages
 from webapp.user.models import User, Messege
+from flask_mail import Mail, Message
 
 from webapp.projects.forms import ProjectForm, AddUserForm, MessegeForm
 from webapp.db import db
 blueprint=Blueprint('projects', __name__)
+
+
 
 @blueprint.route("/")
 def index():
@@ -19,13 +22,22 @@ def index():
 @blueprint.route("/<int:id>")
 @login_required
 def project_detail(id):
-    
     title='Проект'
+    
     project=Project.query.get_or_404(id)
-    project_tasks=project.tasks.all()
-    return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
-
+    if current_user.is_admin:
         
+        project_tasks=project.tasks.all()
+        return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
+    else:
+        if current_user in project.users.all():
+            project_tasks=project.tasks.all()
+            return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
+        else: 
+            abort(404)
+
+
+
 
 @blueprint.route("/<int:id>/send_messege")
 @login_required
@@ -39,10 +51,17 @@ def send_messege(id):
 def process_send_messege(id):
     project=Project.query.get_or_404(id)
     form = MessegeForm()
+    mail = Mail(current_app)
+   
+
     if form.validate_on_submit():
         new_messege=Messege(text=form.text.data,user_id=current_user.id, status=form.status.data, project_id=project.id)
         db.session.add(new_messege)
         db.session.commit()
+        with current_app.app_context():
+            msg = Message("Subject", recipients=['luzanov.zena@gmail.com'])
+            msg.body = form.text.data
+            mail.send(msg)
         return redirect(url_for('projects.index'))
     else:
         for field, errors in form.errors.items():
@@ -71,16 +90,19 @@ def process_add_user_project(id):
     if form.validate_on_submit():
         u = Project.query.get_or_404(id)
         user_name=User.query.filter_by(username=form.username.data).first()
-        #print(u.users.all())
-        if user_name not in u.users.all():
+        if user_name !=None:
+            if user_name not in u.users.all():
 
-            u.users.append(user_name)
-            db.session.add(u)
-            db.session.commit()
-            flash("Пользователь успешно добавлен")
+                u.users.append(user_name)
+                db.session.add(u)
+                db.session.commit()
+                flash("Пользователь успешно добавлен")
+            else:
+                flash("Такой пользователь уже существует")
+                return render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
         else:
-            flash("Такой пользователь уже существует")
-            return render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
+            flash("Такого пользователя нет")
+            return redirect(url_for('projects.add_user_to_project', id=project.id))
         return render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
     
 

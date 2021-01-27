@@ -21,6 +21,11 @@
                 
                 {% for  task in project_tasks %}
                 <h3><a href="{{project.id}}/task/{{task.id}}">{{ task.title }}</a> </h3>
+                <h5 class="task_tag">
+                {% for tag in task.tag %}
+                <a href="{{ url_for('task.tag_sorted', id_project=project.id, tag=tag.name)}}" >#{{tag.name}}</a>
+                {% endfor %}
+                </h5>
             </hr>
             {% endfor %}
             <div class="task_add">

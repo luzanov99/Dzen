@@ -12,7 +12,7 @@ class TaskForm(FlaskForm):
     due_date=DateField('Дата публикации', validators=[DataRequired()])
     status=SelectField('Статус',validators=[DataRequired()], choices=[('active', 'Активный'), ('disable', 'Неактивный'), ('wait', 'Ожидание')],render_kw={"class": "form-control"})
     submit = SubmitField('Отправить',  render_kw={"class": "btn btn-primary"})
-    tags=  SelectMultipleField('Теги', validators=[DataRequired()], render_kw={"class": "chosen-select"}, coerce=str)
+    tags=  SelectMultipleField('Теги',  render_kw={"class": "chosen-select"}, coerce=str)
 
 class CommentForm(FlaskForm):
     text=TextAreaField('Добавить комментарий', validators=[DataRequired()], render_kw={"class": "form-control"})
