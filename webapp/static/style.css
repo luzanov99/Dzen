@@ -22,7 +22,9 @@
     border-radius: .25rem;
     transition: color .15s ease-in-out, background-color .15s ease-in-out,border-color .15s ease-in-out,box-shadow .15s ease-in-out;
 }
-
+.main-title{
+  margin-left: 160px;
+}
 .col-8 img{
     width: 50;
     height:50;
@@ -51,11 +53,165 @@
     text-align: right;
 }
 .task_tag{
-    
+    position: relative;
+    top: 20%;
     font-size: 20px;
     padding-left: 40px;
 }
 .task_tag a{
     opacity: 0.4;
-    color: rgb(146, 133, 133);
+    color: rgb(97, 43, 223);
+}
+.preloader {
+    background: linear-gradient(90deg, #eee8e8 10%, #e9dada 90%);
+    overflow: hidden;
+    position: fixed;
+    left: 0;
+    top: 0;
+    right:0;
+    bottom:0;
+    z-index: 100000;
+  }
+
+  .prePreloader{
+    animation-duration: 10s;
+    text-align: center;
+    font-size: 40px;
+    position: absolute;
+    left: 35%;
+    margin-left: -20px;
+    top: 50%;
+    margin-top: -20px;
+  }
+   
+.prePreloader:before,
+.prePreloader:after {
+  content: "";
+  left: 35%;
+  height: 80px;
+  width: 80px;
+  border: 8px solid rgba(184, 26, 26, 0.5);
+  border-radius: 10px;
+  position: absolute;
+  top: 0;
+}
+ 
+.prePreloader:before {
+  animation: animate 10s infinite linear;
+}
+ 
+@keyframes animate {
+  0% {
+    transform: rotate(0) skew(0);
+  }
+   
+  100% {
+    transform: rotate(180deg) skew(360deg);
+  }
+}
+ 
+ 
+.prePreloader:after {
+  animation: animate2 10s infinite linear;
+}
+ 
+@keyframes animate2 {
+  0% {
+    transform: rotate(0) skew(0);
+  }
+   
+  100% {
+    transform: rotate(-180deg) skew(-360deg);
+  }
+}
+
+
+.w-100{
+  height: 600;
+}
+
+
+.project_name a{
+  font-family: 'Courier New', Courier, monospace;
+  color:rgb(97, 3, 3);
+  font-size: 60px;
+}
+
+.carousel-caption{
+  top: 0;
+}
+.task_buttons{
+  position: absolute;
+  right: 10%;
+  width: 100px;
+  height: 100px;
+}
+
+.task_buttons a{
+margin-top: 20px;
+}
+.user_list{
+  position: absolute;
+  right: 3%;
+  top: 44%;
+  width: 200px;
+  height: 100px;
+}
+.task_description{
+ text-align: justify;
+}
+.edit_task{
+  position: absolute;
+  right: 10%;
+  top: 45%;
+  width: 100px;
+  height: 100px;
+}
+
+.card {
+  float: left;
+ 
+  margin: 20px;
+  padding: 60px;
+  transition: transform 1s;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  position: relative;
+  justify-content: center;
+  }
+.card-body{
+  position: relative;
+}
+.link-card{
+  text-align: center;
+}
+.front {
+  position: absolute;
+  height: 90%;
+  width: 100%;
+  top: 0;
+  left: 0;
+  background-color: #f0e9e9;
+  transition: 1s;
+  backface-visibility: hidden;
+  border-radius: 10px;
+}
+.back{
+  position: absolute;
+  width: 100%;
+  height: 90%;
+  left: 0;
+  top: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: 1s;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  background-color: #BDBDBD;
+  transform: rotateY(180deg);
+}
+
+.card.is-flipped {
+  transform: rotateY(180deg);
 }

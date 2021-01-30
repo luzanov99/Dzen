@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import  Blueprint, render_template, current_app, flash, redirect, url_for
+from flask import  Blueprint, render_template, current_app, flash, redirect, url_for, abort
 from flask_login import LoginManager,current_user, login_required
 from webapp.task.models import Task, Comment, Tag
 from webapp.user.models import User
@@ -14,15 +14,26 @@ blueprint=Blueprint('task', __name__,   url_prefix='/<id_project>/task')
 @blueprint.route("/<int:id>")
 @login_required
 def task_detail(id, id_project):
-   
-    user=User
-    form=CommentForm()
     project=Project.query.get_or_404(id_project)
-    title='Задача'
-    task=Task.query.get_or_404(id)
-    comments=task.comments
-    return  render_template('task/task_detail.html', page_title=title, task=task, project=project, form=form, comments=comments, user=User)
-
+    if not current_user.is_admin:
+        if current_user in project.users.all():
+            user=User
+            form=CommentForm()
+            
+            title='Задача'
+            task=Task.query.get_or_404(id)
+            comments=task.comments
+            return  render_template('task/task_detail.html', page_title=title, task=task, project=project, form=form, comments=comments, user=User)
+        else:
+            abort(404)
+    else:
+        user=User
+        form=CommentForm()
+        project=Project.query.get_or_404(id_project)
+        title='Задача'
+        task=Task.query.get_or_404(id)
+        comments=task.comments
+        return  render_template('task/task_detail.html', page_title=title, task=task, project=project, form=form, comments=comments, user=User)
 
 
 @blueprint.route("/<tag>")
@@ -39,15 +50,17 @@ def tag_sorted(id_project, tag):
 def process_add_comment(id, id_project):
     form = CommentForm()
     
-    title='Задача'
+   
     task=Task.query.get_or_404(id)
     project=Project.query.get(id_project)
     comments=task.comments
     if form.validate_on_submit():
         new_comment=Comment(text=form.text.data, date=datetime.now(), task=id, author=current_user.id)
+        print("1")
         db.session.add(new_comment)
         db.session.commit()
         return redirect(url_for('task.task_detail', id=task.id, id_project=project.id))
+        
     
 
 
@@ -64,7 +77,10 @@ def edit_task(id, id_project):
     task_form.tags.default=groups_list_basic
     task_form.process()
     task_form.title.data=task.title
+   
     task_form.description.data=task.description
+    task_form.short_description=task.description[0:30]
+    
     task_form.due_date.data=task.due_date
     task_form.status.data=task.status
   
@@ -84,6 +100,7 @@ def process_edittask(id, id_project):
         task_new=Task.query.get_or_404(id)
         task_new.title=form.title.data
         task_new.description=form.description.data
+        task_new.short_description=form.description.data[0:30]
         task_new.due_date=form.due_date.data
         task_new.status=form.status.data
         
@@ -127,6 +144,7 @@ def process_addtask(id_project):
     if form.validate_on_submit():
         u = Project.query.get_or_404(id_project)
         new_task=Task(title=form.title.data,description=form.description.data,project=u, due_date=form.due_date.data, status=form.status.data)
+        new_task.short_description=form.description.data[0:30]
         db.session.add(new_task)
         db.session.commit()
         for tag in form.tags.data:

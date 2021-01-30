@@ -9,7 +9,7 @@ class TaskForm(FlaskForm):
     
     title = StringField('Название задачи', validators=[DataRequired()], render_kw={"class": "form-control"})
     description =TextAreaField('Описание задачи', validators=[DataRequired()], render_kw={"class": "form-control"})
-    due_date=DateField('Дата публикации', validators=[DataRequired()])
+    due_date=DateField('Срок сдачи ', validators=[DataRequired()])
     status=SelectField('Статус',validators=[DataRequired()], choices=[('active', 'Активный'), ('disable', 'Неактивный'), ('wait', 'Ожидание')],render_kw={"class": "form-control"})
     submit = SubmitField('Отправить',  render_kw={"class": "btn btn-primary"})
     tags=  SelectMultipleField('Теги',  render_kw={"class": "chosen-select"}, coerce=str)

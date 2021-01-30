@@ -10,11 +10,13 @@ blueprint=Blueprint('projects', __name__)
 
 
 
+
 @blueprint.route("/")
 def index():
     if current_user.is_authenticated:
         title='Проекты'
         projects_list=Project.query.all()
+
         return  render_template('projects/index.html', page_title=title, projects_list=projects_list)
     else :
         return redirect(url_for('user.login'))
@@ -28,7 +30,10 @@ def project_detail(id):
     if current_user.is_admin:
         
         project_tasks=project.tasks.all()
-        return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks)
+        id_list=list()
+        for task in project_tasks:
+            id_list.append('#card'+str(task.id))
+        return  render_template('projects/post_detail.html', page_title=title, project=project, project_tasks=project_tasks, id_list=id_list)
     else:
         if current_user in project.users.all():
             project_tasks=project.tasks.all()
@@ -58,10 +63,11 @@ def process_send_messege(id):
         new_messege=Messege(text=form.text.data,user_id=current_user.id, status=form.status.data, project_id=project.id)
         db.session.add(new_messege)
         db.session.commit()
-        with current_app.app_context():
-            msg = Message("Subject", recipients=['luzanov.zena@gmail.com'])
-            msg.body = form.text.data
-            mail.send(msg)
+       
+        msg = Message("Subject", recipients=['luzanov.zena@gmail.com'])
+        msg.body = form.text.data
+        mail.send(msg)
+        
         return redirect(url_for('projects.index'))
     else:
         for field, errors in form.errors.items():
