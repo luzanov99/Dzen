@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+   
+       
+    
+    <div class='row'>
+        <div class='col-8'>
+            <table class="table">
+                <thead class="thead-dark">
+                    <tr>
+                      <th scope="col">Замечание</th>
+                      <th scope="col">Пользователь</th>
+                      <th scope="col">Тип сообщения</th>
+                      <th scope="col">Название проекта</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                {% for  messege in  messeges_list %}
+                <tr>
+                    <td>{{messege.text}}</td>        
+                    <td>{{users.query.get(messege.user_id).username}}</td>
+                    <td>{{messege.status}}</td>
+                    <td>{{projects.query.get(messege.project_id).name}}</td>  
+                   
+                </tr>
+                {% endfor %}
+            </tbody>
+            </table>
+
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock%}
+
+
+

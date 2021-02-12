@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block content %}
+        <div class="container">
+            {% if current_user.is_admin %}
+        <h3 class="edit_task"><a  class="btn btn-primary" href="{{ url_for('task.edit_task', id_project=project.id, id=task.id)}}">Редактировать задачу</a> </h3> 
+        {% endif %} 
+        
+
+       
+    
+        <div class='row'>
+            <div class='col-10'>
+                {% with messages = get_flashed_messages() %}
+                    {% if messages %}
+                    <div class="alert alert-warning" role="alert">
+                        {% for message in messages %}
+                            {{ message }}<br>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                {% endwith %}
+                <h1>{{ task.title }} </h3>     
+                <h3 class="task_description">{{ task.description}}</h3>
+                <h5>Срок сдачи {{ task.due_date.strftime('%d.%m.%Y') }}</h5>
+                
+                <br>
+                <br>
+                
+                {% for  comment in comments %}
+                <div class="comment_list">
+                <h5>
+                    {{user.query.get(comment.author).username}}:
+                    {{comment.text}}
+                    <div class="date">
+                    <small>{{comment.date.strftime('%d.%m:%H.%M')}} </small>
+                    </div>
+                </h5>
+                </hr>
+                </div>
+                {% endfor %}
+                {% if not current_user.is_admin %}
+                    {% if task.is_active %}
+                    <form action="{{ url_for('task.process_add_comment', id_project=project.id, id=task.id)}}" method="POST">
+                        {{form.hidden_tag()}}
+                        <div class="form-group">
+                            {{ form.text.label }}
+                            {{ form.text() }}
+                        </div>
+                        {{ form.submit }}
+                    </form>
+                    {% endif %}
+                {% else %}
+                <form action="{{ url_for('task.process_add_comment', id_project=project.id, id=task.id)}}" method="POST">
+                    {{form.hidden_tag()}}
+                    <div class="form-group">
+                        {{ form.text.label }}
+                        {{ form.text() }}
+                    </div>
+                    {{ form.submit }}
+                </form>
+                {% endif%}
+
+
+                    
+                </form>
+
+            </div>
+        </div>
+        
+        
+    </div>
+{% endblock %}

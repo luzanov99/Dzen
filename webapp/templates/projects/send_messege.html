@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container">
+<div class='row'>
+    <div class='col-4'>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <div class="alert alert-warning" role="alert">
+                {% for message in messages %}
+                    {{ message }}<br>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+    <form action="{{ url_for('projects.process_send_messege', id=project.id)}}" method="POST">
+        {{form.hidden_tag()}}
+        <div class="form-group">
+            {{ form.text.label }}<br>
+            {{ form.text() }}
+        
+        </div>
+        <div class="form-group">
+            {{ form.status.label }}<br>
+            {{ form.status() }}
+        
+        </div>
+        {{ form.submit }}
+    </form>
+    </div>
+    <div class='col-8'>
+   
+    </div>
+</div>
+</div>
+{% endblock %}
