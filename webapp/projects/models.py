@@ -12,8 +12,6 @@ class Project(db.Model):
     users=db.relationship('User',secondary=users_on_projets, backref='user_project', lazy='dynamic')
     def __repr__(self):
         return f"<Project {self.name}>"
-
-
 class ChatMessages(db.Model):
     id       = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(256))
